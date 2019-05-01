@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>INITIATIVE</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    body {
+      background-color: black;
+    }
+
+    .jumbotron {
+      background: #000000 url("http://dnd.wizards.com/sites/default/files/media/images/news/Article_SwordCoastAdventurerersGuide_Sub-Header_0_1.jpg") no-repeat bottom left;
+      background-size: 100% 100%;
+      overflow: auto;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      text-decoration-color: antiquewhite;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="jumbotron" style="text-align:left">
+      <h1 style="color: white; text-shadow: 2px 2px black;">SIMPLE INITIATIVE</h1>
+      <h2 style="color: white; text-shadow: 2px 2px black;">D&D 3.5e</h2>
+      <h3 style="text-align:right; text-shadow: 2px 2px black;">Encounter:<span class="encounterNum">0</span> Round: <span class="roundNum">0</span> Turn: <span class="turnNum">0</span></h3> 
+      <h4 style="color: rgb(67, 231, 26); text-shadow: 2px 2px black;">Enter the Name and Select a Race for each combatant</h4>
+      <h4 style="color: rgb(67, 231, 26); text-shadow: 2px 2px black;">Enter the Initiative Modifiers and Rolls (or Click ROLL)</h4>
+      <h4 style="color: rgb(67, 231, 26); text-shadow: 2px 2px black;">Click ORDER, and then TURN to cycle through the Battle Order</h4>
+      <h2 style="text-align:right; text-shadow: 2px 2px black;">YOUR TURN  :  <span id="CurrentTurnID" class="CurrentTurnID">?</span>--> Next Up  :  <span id="NextTurnID" class="NextTurnID">?</span></h2> 
+      <div class="row">
+        
+          
+          <button id="roll" type="roll" class="btn btn-default btn-lg roll">
+            <span class="glyphicon glyphicon-knight"></span> ROLL
+          </button>
+          <button id="order" type="order" class="btn btn-default btn-lg order">
+            <span class="glyphicon glyphicon-king"></span> ORDER
+          </button>
+          <button id="turn" type="turn" class="btn btn-default btn-lg turn">
+            <span class="glyphicon glyphicon-pawn"></span> TURN
+          </button>
+        
+
+        
+      </div> 
+      
+    </div>
+  </div>
+
+
+<div class="row" style="overflow-y: auto; max-height: 600px;">
+
+    <div class="col-md-4">
+
+        <table border="1">
+            
+            <thead>
+             <tr>
+             <th style="text-align: center; vertical-align: middle;" colspan="3">CHARACTERS</th></tr>
+            </thead>
+          
+            <thead>
+                <tr>
+                  <th style="text-align: center; vertical-align: middle;">ID</th>
+                  <th style="text-align: center; vertical-align: middle;">STAT</th>
+                  <th style="text-align: center; vertical-align: middle;">CUSTOMIZE</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            
+              <tr> 
+                <td style="text-align: center; vertical-align: middle;">
+                <form class="form-inline">
+                  <div class="form-group">
+                      <label for="char1nameInput">_Character 1_:</label>
+                      <input type="text" class="form-control char1name" id="char1name" placeholder="Enter Name"></input>
+                      <button id="char1submit" type="char1submit" class="btn btn-default char1submit">Update</button>
+                  </div>
+                </form>
+              </td>
+                 <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar1race" onchange="getData(this.value)">
+                  <option value="Char1race">RACE</option>
+                  <option value="Char1human">Human</option> 
+                  <option value="Char1elf">Elf</option> 
+                  <option value="Char1gnome">Gnome</option>
+                  <option value="Char1dwarf">Dwarf</option> 
+                  <option value="Char1halfling">Halfling</option> 
+                  <option value="Char1orc">Orc</option> 
+              </select></td>
+              <td style="text-align: center; vertical-align: middle;"><select id="selChar1class" onchange="getData(this.value)">
+                  <option value="Char1class">CLASS</option>
+                  <option value="Char1fighter">Fighter</option> 
+                  <option value="Char1cleric">Cleric</option> 
+                  <option value="Char1rogue">Rogue</option>
+                  <option value="Char1druid">Druid</option> 
+                  <option value="Char1bard">Bard</option> 
+                  <option value="Char1monk">Monk</option> 
+                  <option value="Char1ranger">Ranger</option> 
+                  <option value="Char1sorcerer">Sorcerer</option>
+                  <option value="Char1paladin">Paladin</option> 
+                  <option value="Char1barbarian">Barbarian</option>
+                  <option value="Char1wizard">Wizard</option>
+                  <option value="Char1other">Other</option> 
+                  <option value="Char1slime">Slime</option>
+
+              </select></td>
+              </tr>
+
+              <tr> 
+                <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char1modInput">___Modifier__:</label>
+                        <input type="text" class="form-control char1initMod" id="char1initMod" placeholder="Enter Mod"></input>
+                        <button id="char1modsubmit" type="char1modsubmit" class="btn btn-default char1modsubmit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                <td style="text-align: center; vertical-align: middle;"><span class="char1mod">0</span></td>
+                <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char1up">
+                    <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                  </button>
+                  <button type="button" class="btn btn-default btn-lg char1down">
+                      <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                  </button></td>
+              </tr>
+              
+              <tr> 
+                <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char1initInput">__Initiative__:</label>
+                        <input type="text" class="form-control char1initRoll" id="char1initRoll" placeholder="Enter Roll"></input>
+                        <button id="char1rollsubmit" type="char1rollsubmit" class="btn btn-default char1rollsubmit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                <td style="text-align: center; vertical-align: middle;"><span class="char1init">0</span></td>
+              </tr>
+              <tr><td>----------------------------------------------------------------------------------</td><td>------------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char2nameInput">_Character 2_:</label>
+                        <input type="text" class="form-control char2name" id="char2name" placeholder="Enter Name"></input>
+                        <button id="char2submit" type="char2submit" class="btn btn-default char2submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar2race" onchange="getData(this.value)">
+                    <option value="Char2race">RACE</option>
+                    <option value="Char2human">Human</option> 
+                    <option value="Char2elf">Elf</option> 
+                    <option value="Char2gnome">Gnome</option>
+                    <option value="Char2dwarf">Dwarf</option> 
+                    <option value="Char2halfling">Halfling</option> 
+                    <option value="Char2orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar2class" onchange="getData(this.value)">
+                    <option value="Char2class">CLASS</option>
+                  <option value="Char2fighter">Fighter</option> 
+                  <option value="Char2cleric">Cleric</option> 
+                  <option value="Char2rogue">Rogue</option>
+                  <option value="Char2druid">Druid</option> 
+                  <option value="Char2bard">Bard</option> 
+                  <option value="Char2monk">Monk</option> 
+                  <option value="Char2ranger">Ranger</option> 
+                  <option value="Char2sorcerer">Sorcerer</option>
+                  <option value="Char2paladin">Paladin</option> 
+                  <option value="Char2barbarian">Barbarian</option>
+                  <option value="Char2wizard">Wizard</option>
+                  <option value="Char2other">Other</option> 
+                  <option value="Char2slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char2modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char2initMod" id="char2initMod" placeholder="Enter Mod"></input>
+                          <button id="char2modsubmit" type="char2modsubmit" class="btn btn-default char2modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char2mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char2up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char2down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char2initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char2initRoll" id="char2initRoll" placeholder="Enter Roll"></input>
+                          <button id="char2rollsubmit" type="char2rollsubmit" class="btn btn-default char2rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char2init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char3nameInput">_Character 3_:</label>
+                        <input type="text" class="form-control char3name" id="char3name" placeholder="Enter Name"></input>
+                        <button id="char3submit" type="char3submit" class="btn btn-default char3submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar3race" onchange="getData(this.value)">
+                    <option value="Char3race">RACE</option>
+                    <option value="Char3human">Human</option> 
+                    <option value="Char3elf">Elf</option> 
+                    <option value="Char3gnome">Gnome</option>
+                    <option value="Char3dwarf">Dwarf</option> 
+                    <option value="Char3halfling">Halfling</option> 
+                    <option value="Char3orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar3class" onchange="getData(this.value)">
+                    <option value="Char3class">CLASS</option>
+                  <option value="Char3fighter">Fighter</option> 
+                  <option value="Char3cleric">Cleric</option> 
+                  <option value="Char3rogue">Rogue</option>
+                  <option value="Char3druid">Druid</option> 
+                  <option value="Char3bard">Bard</option> 
+                  <option value="Char3monk">Monk</option> 
+                  <option value="Char3ranger">Ranger</option> 
+                  <option value="Char3sorcerer">Sorcerer</option>
+                  <option value="Char3paladin">Paladin</option> 
+                  <option value="Char3barbarian">Barbarian</option>
+                  <option value="Char3wizard">Wizard</option>
+                  <option value="Char3other">Other</option> 
+                  <option value="Char3slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char3modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char3initMod" id="char3initMod" placeholder="Enter Mod"></input>
+                          <button id="char3modsubmit" type="char3modsubmit" class="btn btn-default char3modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char3mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char3up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char3down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char3initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char3initRoll" id="char3initRoll" placeholder="Enter Roll"></input>
+                          <button id="char3rollsubmit" type="char3rollsubmit" class="btn btn-default char3rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char3init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char4nameInput">_Character 4_:</label>
+                        <input type="text" class="form-control char4name" id="char4name" placeholder="Enter Name"></input>
+                        <button id="char4submit" type="char4submit" class="btn btn-default char4submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar4race" onchange="getData(this.value)">
+                    <option value="Char4race">RACE</option>
+                    <option value="Char4human">Human</option> 
+                    <option value="Char4elf">Elf</option> 
+                    <option value="Char4gnome">Gnome</option>
+                    <option value="Char4dwarf">Dwarf</option> 
+                    <option value="Char4halfling">Halfling</option> 
+                    <option value="Char4orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar4class" onchange="getData(this.value)">
+                    <option value="Char4class">CLASS</option>
+                  <option value="Char4fighter">Fighter</option> 
+                  <option value="Char4cleric">Cleric</option> 
+                  <option value="Char4rogue">Rogue</option>
+                  <option value="Char4druid">Druid</option> 
+                  <option value="Char4bard">Bard</option> 
+                  <option value="Char4monk">Monk</option> 
+                  <option value="Char4ranger">Ranger</option> 
+                  <option value="Char4sorcerer">Sorcerer</option>
+                  <option value="Char4paladin">Paladin</option> 
+                  <option value="Char4barbarian">Barbarian</option>
+                  <option value="Char4wizard">Wizard</option>
+                  <option value="Char4other">Other</option> 
+                  <option value="Char4slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char4modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char4initMod" id="char4initMod" placeholder="Enter Mod"></input>
+                          <button id="char4modsubmit" type="char4modsubmit" class="btn btn-default char4modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char4mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char4up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char4down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char4initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char4initRoll" id="char4initRoll" placeholder="Enter Roll"></input>
+                          <button id="char4rollsubmit" type="char4rollsubmit" class="btn btn-default char4rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char4init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char5nameInput">_Character 5_:</label>
+                        <input type="text" class="form-control char5name" id="char5name" placeholder="Enter Name"></input>
+                        <button id="char5submit" type="char5submit" class="btn btn-default char5submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar5race" onchange="getData(this.value)">
+                    <option value="Char5race">RACE</option>
+                    <option value="Char5human">Human</option> 
+                    <option value="Char5elf">Elf</option> 
+                    <option value="Char5gnome">Gnome</option>
+                    <option value="Char5dwarf">Dwarf</option> 
+                    <option value="Char5halfling">Halfling</option> 
+                    <option value="Char5orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar5class" onchange="getData(this.value)">
+                    <option value="Char5class">CLASS</option>
+                  <option value="Char5fighter">Fighter</option> 
+                  <option value="Char5cleric">Cleric</option> 
+                  <option value="Char5rogue">Rogue</option>
+                  <option value="Char5druid">Druid</option> 
+                  <option value="Char5bard">Bard</option> 
+                  <option value="Char5monk">Monk</option> 
+                  <option value="Char5ranger">Ranger</option> 
+                  <option value="Char5sorcerer">Sorcerer</option>
+                  <option value="Char5paladin">Paladin</option> 
+                  <option value="Char5barbarian">Barbarian</option>
+                  <option value="Char5wizard">Wizard</option>
+                  <option value="Char5other">Other</option> 
+                  <option value="Char5slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char5modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char5initMod" id="char5initMod" placeholder="Enter Mod"></input>
+                          <button id="char5modsubmit" type="char5modsubmit" class="btn btn-default char5modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char5mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char5up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char5down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char5initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char5initRoll" id="char5initRoll" placeholder="Enter Roll"></input>
+                          <button id="char5rollsubmit" type="char5rollsubmit" class="btn btn-default char5rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char5init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char6nameInput">_Character 6_:</label>
+                        <input type="text" class="form-control char6name" id="char6name" placeholder="Enter Name"></input>
+                        <button id="char6submit" type="char6submit" class="btn btn-default char6submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar6race" onchange="getData(this.value)">
+                    <option value="Char6race">RACE</option>
+                    <option value="Char6human">Human</option> 
+                    <option value="Char6elf">Elf</option> 
+                    <option value="Char6gnome">Gnome</option>
+                    <option value="Char6dwarf">Dwarf</option> 
+                    <option value="Char6halfling">Halfling</option> 
+                    <option value="Char6orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar6class" onchange="getData(this.value)">
+                    <option value="Char6class">CLASS</option>
+                  <option value="Char6fighter">Fighter</option> 
+                  <option value="Char6cleric">Cleric</option> 
+                  <option value="Char6rogue">Rogue</option>
+                  <option value="Char6druid">Druid</option> 
+                  <option value="Char6bard">Bard</option> 
+                  <option value="Char6monk">Monk</option> 
+                  <option value="Char6ranger">Ranger</option> 
+                  <option value="Char6sorcerer">Sorcerer</option>
+                  <option value="Char6paladin">Paladin</option> 
+                  <option value="Char6barbarian">Barbarian</option>
+                  <option value="Char6wizard">Wizard</option>
+                  <option value="Char6other">Other</option> 
+                  <option value="Char6slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char6modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char6initMod" id="char6initMod" placeholder="Enter Mod"></input>
+                          <button id="char6modsubmit" type="char6modsubmit" class="btn btn-default char6modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char6mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char6up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char6down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char6initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char6initRoll" id="char6initRoll" placeholder="Enter Roll"></input>
+                          <button id="char6rollsubmit" type="char6rollsubmit" class="btn btn-default char6rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char6init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char7nameInput">_Character 7_:</label>
+                        <input type="text" class="form-control char7name" id="char7name" placeholder="Enter Name"></input>
+                        <button id="char7submit" type="char7submit" class="btn btn-default char7submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar7race" onchange="getData(this.value)">
+                    <option value="Char7race">RACE</option>
+                    <option value="Char7human">Human</option> 
+                    <option value="Char7elf">Elf</option> 
+                    <option value="Char7gnome">Gnome</option>
+                    <option value="Char7dwarf">Dwarf</option> 
+                    <option value="Char7halfling">Halfling</option> 
+                    <option value="Char7orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar7class" onchange="getData(this.value)">
+                    <option value="Char7class">CLASS</option>
+                  <option value="Char7fighter">Fighter</option> 
+                  <option value="Char7cleric">Cleric</option> 
+                  <option value="Char7rogue">Rogue</option>
+                  <option value="Char7druid">Druid</option> 
+                  <option value="Char7bard">Bard</option> 
+                  <option value="Char7monk">Monk</option> 
+                  <option value="Char7ranger">Ranger</option> 
+                  <option value="Char7sorcerer">Sorcerer</option>
+                  <option value="Char7paladin">Paladin</option> 
+                  <option value="Char7barbarian">Barbarian</option>
+                  <option value="Char7wizard">Wizard</option>
+                  <option value="Char7other">Other</option> 
+                  <option value="Char7slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char7modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char7initMod" id="char7initMod" placeholder="Enter Mod"></input>
+                          <button id="char7modsubmit" type="char7modsubmit" class="btn btn-default char7modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char7mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char7up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char7down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char7initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char7initRoll" id="char7initRoll" placeholder="Enter Roll"></input>
+                          <button id="char7rollsubmit" type="char7rollsubmit" class="btn btn-default char7rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char7init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="char8nameInput">_Character 8_:</label>
+                        <input type="text" class="form-control char8name" id="char8name" placeholder="Enter Name"></input>
+                        <button id="char8submit" type="char8submit" class="btn btn-default char8submit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                   <!-- Row 1 <td style="text-align: center; vertical-align: middle;"><span class="char1name">Name</span></td> -->
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selChar8race" onchange="getData(this.value)">
+                    <option value="Char8race">RACE</option>
+                    <option value="Char8human">Human</option> 
+                    <option value="Char8elf">Elf</option> 
+                    <option value="Char8gnome">Gnome</option>
+                    <option value="Char8dwarf">Dwarf</option> 
+                    <option value="Char8halfling">Halfling</option> 
+                    <option value="Char8orc">Orc</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selChar8class" onchange="getData(this.value)">
+                    <option value="Char8class">CLASS</option>
+                  <option value="Char8fighter">Fighter</option> 
+                  <option value="Char8cleric">Cleric</option> 
+                  <option value="Char8rogue">Rogue</option>
+                  <option value="Char8druid">Druid</option> 
+                  <option value="Char8bard">Bard</option> 
+                  <option value="Char8monk">Monk</option> 
+                  <option value="Char8ranger">Ranger</option> 
+                  <option value="Char8sorcerer">Sorcerer</option>
+                  <option value="Char8paladin">Paladin</option> 
+                  <option value="Char8barbarian">Barbarian</option>
+                  <option value="Char8wizard">Wizard</option>
+                  <option value="Char8other">Other</option> 
+                  <option value="Char8slime">Slime</option> 
+                </select></td>
+                </tr>
+  
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char8modInput">___Modifier__:</label>
+                          <input type="text" class="form-control char8initMod" id="char8initMod" placeholder="Enter Mod"></input>
+                          <button id="char8modsubmit" type="char8modsubmit" class="btn btn-default char8modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char8mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg char8up">
+                      <span class="glyphicon glyphicon-circle-arrow-up"></span> +
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg char8down">
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button></td>
+                </tr>
+                
+                <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="char8initInput">__Initiative__:</label>
+                          <input type="text" class="form-control char8initRoll" id="char8initRoll" placeholder="Enter Roll"></input>
+                          <button id="char8rollsubmit" type="char8rollsubmit" class="btn btn-default char8rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="char8init">0</span></td>
+                </tr>
+                <tr><td>-----------------------------------------------------------------------------------</td><td>----------------</td><td>----------------------------</td></tr>
+            </tbody>
+            
+          </table>
+        
+    </div>
+    <div class="col-md-4">
+        <table id="order-table" class="table" style="font-size: 18px; color: white;" >
+            <thead>
+            <tr><th style="font-size: 18px; color: white; text-align: center; vertical-align: middle;" colspan="4">BATTLE ORDER</th></tr>
+            <tr>
+                <th style="font-size: 16px; ">ORDER</th>
+                <th style="font-size: 16px; ">COMBATANT</th>
+                <th style="font-size: 16px; ">NAME</th>
+                <th style="font-size: 16px; ">RACE</th>
+                <th style="font-size: 16px; ">INITIATIVE</th>
+              </tr>  
+            </thead>
+          </table>
+        <div id="table-area" class="">
+          <table id="order-table" class="table" style="font-size: 16px; color: white;" >
+            
+            <tbody class="tbody" style="font-size: 16px; color: white; text-align: center; vertical-align: middle;">
+            </tbody> 
+          </table>     
+        </div>
+    </div>
+
+
+    <div class="col-md-4">
+
+        <table border="1">
+            
+            <thead>
+             <tr>
+             <th style="text-align: center; vertical-align: middle;" colspan="3">MONSTERS</th></tr>
+            </thead>
+          
+            <thead>
+                <tr>
+                  <th style="text-align: center; vertical-align: middle;">ID</th>
+                  <th style="text-align: center; vertical-align: middle;">STAT</th>
+                  <th style="text-align: center; vertical-align: middle;">CUSTOMIZE</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            
+                <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="mons1nameInput">_Monster 1_:</label>
+                          <input type="text" class="form-control mons1name" id="mons1name" placeholder="Enter Name"></input>
+                          <button id="mons1submit" type="mons1submit" class="btn btn-default mons1submit">Update</button>
+                          
+                          <td style="text-align: center; vertical-align: middle;"><select id="selMons1size" onchange="getData(this.value)">
+                              <option value="mons1size">SIZE</option>
+                              <option value="mons1Fine">Fine</option> 
+                              <option value="mons1Diminutive">Diminutive</option> 
+                              <option value="mons1Tiny">Tiny</option>
+                              <option value="mons1Small">Small</option> 
+                              <option value="mons1Medium">Medium</option> 
+                              <option value="mons1Large">Large</option>
+                              <option value="mons1Huge">Huge</option>
+                              <option value="mons1Gargantuan">Gargantuan</option> 
+                              <option value="mons1Colossal">Colossal</option> 
+                              <option value="mons1Colossal+">Colossal+</option> 
+                          </select></td> 
+                          <td style="text-align: center; vertical-align: middle;"><select id="selMons1race" onchange="getData(this.value)">
+                              <option value="Mons1race">RACE</option>
+                              <option value="Mons1ogre">Ogre</option> 
+                              <option value="Mons1orc">Orc</option> 
+                              <option value="Mons1dragon">Dragon</option> 
+                          </select></td>
+                      </div>
+                    </form>
+                  </td>
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="mons1modInput">___Modifier__:</label>
+                          <input type="text" class="form-control mons1initMod" id="mons1initMod" placeholder="Enter Mod"></input>
+                          <button id="mons1modsubmit" type="mons1modsubmit" class="btn btn-default mons1modsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="mons1mod">0</span></td>
+                  <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons1up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+                    <button type="button" class="btn btn-default btn-lg mons1down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                    </button>
+                  </td>
+                </tr>
+
+                <tr> 
+                    <td style="text-align: center; vertical-align: middle;">
+                      <form class="form-inline">
+                        <div class="form-group">
+                            <label for="mons1initInput">__Initiative__:</label>
+                            <input type="text" class="form-control mons1initRoll" id="mons1initRoll" placeholder="Enter Roll"></input>
+                            <button id="mons1rollsubmit" type="mons1rollsubmit" class="btn btn-default mons1rollsubmit">Update</button>
+                        </div>
+                      </form>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;"><span class="mons1init">0</span></td>
+                  </tr>
+              
+              <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+              
+
+              <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="mons2nameInput">_Monster 2_:</label>
+                        <input type="text" class="form-control mons2name" id="mons2name" placeholder="Enter Name"></input>
+                        <button id="mons2submit" type="mons2submit" class="btn btn-default mons2submit">Update</button>
+                        
+                        <td style="text-align: center; vertical-align: middle;"><select id="selMons2size" onchange="getData(this.value)">
+                            <option value="mons2size">SIZE</option>
+                            <option value="mons2Fine">Fine</option> 
+                            <option value="mons2Diminutive">Diminutive</option> 
+                            <option value="mons2Tiny">Tiny</option>
+                            <option value="mons2Small">Small</option> 
+                            <option value="mons2Medium">Medium</option> 
+                            <option value="mons2Large">Large</option>
+                            <option value="mons2Huge">Huge</option>
+                            <option value="mons2Gargantuan">Gargantuan</option> 
+                            <option value="mons2Colossal">Colossal</option> 
+                            <option value="mons2Colossal+">Colossal+</option> 
+                        </select></td>
+                        <td style="text-align: center; vertical-align: middle;"><select id="selMons2race" onchange="getData(this.value)">
+                            <option value="Mons2race">RACE</option>
+                            <option value="Mons2ogre">Ogre</option> 
+                            <option value="Mons2orc">Orc</option> 
+                            <option value="Mons2dragon">Dragon</option> 
+                        </select></td>
+                    </div>
+                  </form>
+                </td>
+            <tr> 
+                <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="mons2modInput">___Modifier__:</label>
+                        <input type="text" class="form-control mons2initMod" id="mons2initMod" placeholder="Enter Mod"></input>
+                        <button id="mons2modsubmit" type="mons2modsubmit" class="btn btn-default mons2modsubmit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                <td style="text-align: center; vertical-align: middle;"><span class="mons2mod">0</span></td>
+                <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons2up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+                  <button type="button" class="btn btn-default btn-lg mons2down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                  </button>
+                </td>
+              </tr>
+
+              <tr> 
+                  <td style="text-align: center; vertical-align: middle;">
+                    <form class="form-inline">
+                      <div class="form-group">
+                          <label for="mons2initInput">__Initiative__:</label>
+                          <input type="text" class="form-control mons2initRoll" id="mons2initRoll" placeholder="Enter Roll"></input>
+                          <button id="mons2rollsubmit" type="mons2rollsubmit" class="btn btn-default mons2rollsubmit">Update</button>
+                      </div>
+                    </form>
+                  </td>
+                  <td style="text-align: center; vertical-align: middle;"><span class="mons2init">0</span></td>
+                </tr>
+            
+            <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+            
+            
+
+            <td style="text-align: center; vertical-align: middle;">
+                <form class="form-inline">
+                  <div class="form-group">
+                      <label for="mons3nameInput">_Monster 3_:</label>
+                      <input type="text" class="form-control mons3name" id="mons3name" placeholder="Enter Name"></input>
+                      <button id="mons3submit" type="mons3submit" class="btn btn-default mons3submit">Update</button>
+                      
+                      <td style="text-align: center; vertical-align: middle;"><select id="selMons3size" onchange="getData(this.value)">
+                          <option value="mons3size">SIZE</option>
+                          <option value="mons3Fine">Fine</option> 
+                          <option value="mons3Diminutive">Diminutive</option> 
+                          <option value="mons3Tiny">Tiny</option>
+                          <option value="mons3Small">Small</option> 
+                          <option value="mons3Medium">Medium</option> 
+                          <option value="mons3Large">Large</option>
+                          <option value="mons3Huge">Huge</option>
+                          <option value="mons3Gargantuan">Gargantuan</option> 
+                          <option value="mons3Colossal">Colossal</option> 
+                          <option value="mons3Colossal+">Colossal+</option> 
+                      </select></td>
+                      <td style="text-align: center; vertical-align: middle;"><select id="selMons3race" onchange="getData(this.value)">
+                          <option value="Mons3race">RACE</option>
+                          <option value="Mons3ogre">Ogre</option> 
+                          <option value="Mons3orc">Orc</option> 
+                          <option value="Mons3dragon">Dragon</option> 
+                      </select></td>
+                  </div>
+                </form>
+              </td>
+          <tr> 
+              <td style="text-align: center; vertical-align: middle;">
+                <form class="form-inline">
+                  <div class="form-group">
+                      <label for="mons3modInput">___Modifier__:</label>
+                      <input type="text" class="form-control mons3initMod" id="mons3initMod" placeholder="Enter Mod"></input>
+                      <button id="mons3modsubmit" type="mons3modsubmit" class="btn btn-default mons3modsubmit">Update</button>
+                  </div>
+                </form>
+              </td>
+              <td style="text-align: center; vertical-align: middle;"><span class="mons3mod">0</span></td>
+              <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons3up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+                <button type="button" class="btn btn-default btn-lg mons3down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+                </button>
+              </td>
+            </tr>
+
+            <tr> 
+                <td style="text-align: center; vertical-align: middle;">
+                  <form class="form-inline">
+                    <div class="form-group">
+                        <label for="mons3initInput">__Initiative__:</label>
+                        <input type="text" class="form-control mons3initRoll" id="mons3initRoll" placeholder="Enter Roll"></input>
+                        <button id="mons3rollsubmit" type="mons3rollsubmit" class="btn btn-default mons3rollsubmit">Update</button>
+                    </div>
+                  </form>
+                </td>
+                <td style="text-align: center; vertical-align: middle;"><span class="mons3init">0</span></td>
+              </tr>
+          
+          <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+          
+          
+
+          <td style="text-align: center; vertical-align: middle;">
+              <form class="form-inline">
+                <div class="form-group">
+                    <label for="mons4nameInput">_Monster 4_:</label>
+                    <input type="text" class="form-control mons4name" id="mons4name" placeholder="Enter Name"></input>
+                    <button id="mons4submit" type="mons4submit" class="btn btn-default mons4submit">Update</button>
+                    
+                    <td style="text-align: center; vertical-align: middle;"><select id="selMons4size" onchange="getData(this.value)">
+                        <option value="mons4size">SIZE</option>
+                        <option value="mons4Fine">Fine</option> 
+                        <option value="mons4Diminutive">Diminutive</option> 
+                        <option value="mons4Tiny">Tiny</option>
+                        <option value="mons4Small">Small</option> 
+                        <option value="mons4Medium">Medium</option> 
+                        <option value="mons4Large">Large</option>
+                        <option value="mons4Huge">Huge</option>
+                        <option value="mons4Gargantuan">Gargantuan</option> 
+                        <option value="mons4Colossal">Colossal</option> 
+                        <option value="mons4Colossal+">Colossal+</option> 
+                    </select></td>
+                    <td style="text-align: center; vertical-align: middle;"><select id="selMons4race" onchange="getData(this.value)">
+                        <option value="Mons4race">RACE</option>
+                        <option value="Mons4ogre">Ogre</option> 
+                        <option value="Mons4orc">Orc</option> 
+                        <option value="Mons4dragon">Dragon</option> 
+                    </select></td>
+                </div>
+              </form>
+            </td>
+        <tr> 
+            <td style="text-align: center; vertical-align: middle;">
+              <form class="form-inline">
+                <div class="form-group">
+                    <label for="mons4modInput">___Modifier__:</label>
+                    <input type="text" class="form-control mons4initMod" id="mons4initMod" placeholder="Enter Mod"></input>
+                    <button id="mons4modsubmit" type="mons4modsubmit" class="btn btn-default mons4modsubmit">Update</button>
+                </div>
+              </form>
+            </td>
+            <td style="text-align: center; vertical-align: middle;"><span class="mons4mod">0</span></td>
+            <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons4up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+              <button type="button" class="btn btn-default btn-lg mons4down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+              </button>
+            </td>
+          </tr>
+
+          <tr> 
+              <td style="text-align: center; vertical-align: middle;">
+                <form class="form-inline">
+                  <div class="form-group">
+                      <label for="mons4initInput">__Initiative__:</label>
+                      <input type="text" class="form-control mons4initRoll" id="mons4initRoll" placeholder="Enter Roll"></input>
+                      <button id="mons4rollsubmit" type="mons4rollsubmit" class="btn btn-default mons4rollsubmit">Update</button>
+                  </div>
+                </form>
+              </td>
+              <td style="text-align: center; vertical-align: middle;"><span class="mons4init">0</span></td>
+            </tr>
+        
+        <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+        
+        
+
+        <td style="text-align: center; vertical-align: middle;">
+            <form class="form-inline">
+              <div class="form-group">
+                  <label for="mons5nameInput">_Monster 5_:</label>
+                  <input type="text" class="form-control mons5name" id="mons5name" placeholder="Enter Name"></input>
+                  <button id="mons5submit" type="mons5submit" class="btn btn-default mons5submit">Update</button>
+                  
+                  <td style="text-align: center; vertical-align: middle;"><select id="selMons5size" onchange="getData(this.value)">
+                      <option value="mons5size">SIZE</option>
+                      <option value="mons5Fine">Fine</option> 
+                      <option value="mons5Diminutive">Diminutive</option> 
+                      <option value="mons5Tiny">Tiny</option>
+                      <option value="mons5Small">Small</option> 
+                      <option value="mons5Medium">Medium</option> 
+                      <option value="mons5Large">Large</option>
+                      <option value="mons5Huge">Huge</option>
+                      <option value="mons5Gargantuan">Gargantuan</option> 
+                      <option value="mons5Colossal">Colossal</option> 
+                      <option value="mons5Colossal+">Colossal+</option> 
+                  </select></td>
+                  <td style="text-align: center; vertical-align: middle;"><select id="selMons5race" onchange="getData(this.value)">
+                      <option value="Mons5race">RACE</option>
+                      <option value="Mons5ogre">Ogre</option> 
+                      <option value="Mons5orc">Orc</option> 
+                      <option value="Mons5dragon">Dragon</option> 
+                  </select></td>
+              </div>
+            </form>
+          </td>
+      <tr> 
+          <td style="text-align: center; vertical-align: middle;">
+            <form class="form-inline">
+              <div class="form-group">
+                  <label for="mons5modInput">___Modifier__:</label>
+                  <input type="text" class="form-control mons5initMod" id="mons5initMod" placeholder="Enter Mod"></input>
+                  <button id="mons5modsubmit" type="mons5modsubmit" class="btn btn-default mons5modsubmit">Update</button>
+              </div>
+            </form>
+          </td>
+          <td style="text-align: center; vertical-align: middle;"><span class="mons5mod">0</span></td>
+          <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons5up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+            <button type="button" class="btn btn-default btn-lg mons5down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+            </button>
+          </td>
+        </tr>
+
+        <tr> 
+            <td style="text-align: center; vertical-align: middle;">
+              <form class="form-inline">
+                <div class="form-group">
+                    <label for="mons5initInput">__Initiative__:</label>
+                    <input type="text" class="form-control mons5initRoll" id="mons5initRoll" placeholder="Enter Roll"></input>
+                    <button id="mons5rollsubmit" type="mons5rollsubmit" class="btn btn-default mons5rollsubmit">Update</button>
+                </div>
+              </form>
+            </td>
+            <td style="text-align: center; vertical-align: middle;"><span class="mons5init">0</span></td>
+          </tr>
+      
+      <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+      
+      
+
+      <td style="text-align: center; vertical-align: middle;">
+          <form class="form-inline">
+            <div class="form-group">
+                <label for="mons6nameInput">_Monster 6_:</label>
+                <input type="text" class="form-control mons6name" id="mons6name" placeholder="Enter Name"></input>
+                <button id="mons6submit" type="mons6submit" class="btn btn-default mons6submit">Update</button>
+                
+                <td style="text-align: center; vertical-align: middle;"><select id="selMons6size" onchange="getData(this.value)">
+                    <option value="mons6size">SIZE</option>
+                    <option value="mons6Fine">Fine</option> 
+                    <option value="mons6Diminutive">Diminutive</option> 
+                    <option value="mons6Tiny">Tiny</option>
+                    <option value="mons6Small">Small</option> 
+                    <option value="mons6Medium">Medium</option> 
+                    <option value="mons6Large">Large</option>
+                    <option value="mons6Huge">Huge</option>
+                    <option value="mons6Gargantuan">Gargantuan</option> 
+                    <option value="mons6Colossal">Colossal</option> 
+                    <option value="mons6Colossal+">Colossal+</option> 
+                </select></td>
+                <td style="text-align: center; vertical-align: middle;"><select id="selMons6race" onchange="getData(this.value)">
+                    <option value="Mons6race">RACE</option>
+                    <option value="Mons6ogre">Ogre</option> 
+                    <option value="Mons6orc">Orc</option> 
+                    <option value="Mons6dragon">Dragon</option> 
+                </select></td>
+            </div>
+          </form>
+        </td>
+    <tr> 
+        <td style="text-align: center; vertical-align: middle;">
+          <form class="form-inline">
+            <div class="form-group">
+                <label for="mons6modInput">___Modifier__:</label>
+                <input type="text" class="form-control mons6initMod" id="mons6initMod" placeholder="Enter Mod"></input>
+                <button id="mons6modsubmit" type="mons6modsubmit" class="btn btn-default mons6modsubmit">Update</button>
+            </div>
+          </form>
+        </td>
+        <td style="text-align: center; vertical-align: middle;"><span class="mons6mod">0</span></td>
+        <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons6up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+          <button type="button" class="btn btn-default btn-lg mons6down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+          </button>
+        </td>
+      </tr>
+
+      <tr> 
+          <td style="text-align: center; vertical-align: middle;">
+            <form class="form-inline">
+              <div class="form-group">
+                  <label for="mons6initInput">__Initiative__:</label>
+                  <input type="text" class="form-control mons6initRoll" id="mons6initRoll" placeholder="Enter Roll"></input>
+                  <button id="mons6rollsubmit" type="mons6rollsubmit" class="btn btn-default mons6rollsubmit">Update</button>
+              </div>
+            </form>
+          </td>
+          <td style="text-align: center; vertical-align: middle;"><span class="mons6init">0</span></td>
+        </tr>
+    
+    <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+    
+    
+
+    <td style="text-align: center; vertical-align: middle;">
+        <form class="form-inline">
+          <div class="form-group">
+              <label for="mons7nameInput">_Monster 7_:</label>
+              <input type="text" class="form-control mons7name" id="mons7name" placeholder="Enter Name"></input>
+              <button id="mons7submit" type="mons7submit" class="btn btn-default mons7submit">Update</button>
+              
+              <td style="text-align: center; vertical-align: middle;"><select id="selMons7size" onchange="getData(this.value)">
+                  <option value="mons7size">SIZE</option>
+                  <option value="mons7Fine">Fine</option> 
+                  <option value="mons7Diminutive">Diminutive</option> 
+                  <option value="mons7Tiny">Tiny</option>
+                  <option value="mons7Small">Small</option> 
+                  <option value="mons7Medium">Medium</option> 
+                  <option value="mons7Large">Large</option>
+                  <option value="mons7Huge">Huge</option>
+                  <option value="mons7Gargantuan">Gargantuan</option> 
+                  <option value="mons7Colossal">Colossal</option> 
+                  <option value="mons7Colossal+">Colossal+</option> 
+              </select></td>
+              <td style="text-align: center; vertical-align: middle;"><select id="selMons7race" onchange="getData(this.value)">
+                  <option value="Mons7race">RACE</option>
+                  <option value="Mons7ogre">Ogre</option> 
+                  <option value="Mons7orc">Orc</option> 
+                  <option value="Mons7dragon">Dragon</option> 
+              </select></td>
+          </div>
+        </form>
+      </td>
+  <tr> 
+      <td style="text-align: center; vertical-align: middle;">
+        <form class="form-inline">
+          <div class="form-group">
+              <label for="mons7modInput">___Modifier__:</label>
+              <input type="text" class="form-control mons7initMod" id="mons7initMod" placeholder="Enter Mod"></input>
+              <button id="mons7modsubmit" type="mons7modsubmit" class="btn btn-default mons7modsubmit">Update</button>
+          </div>
+        </form>
+      </td>
+      <td style="text-align: center; vertical-align: middle;"><span class="mons7mod">0</span></td>
+      <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons7up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+        <button type="button" class="btn btn-default btn-lg mons7down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+        </button>
+      </td>
+    </tr>
+
+    <tr> 
+        <td style="text-align: center; vertical-align: middle;">
+          <form class="form-inline">
+            <div class="form-group">
+                <label for="mons7initInput">__Initiative__:</label>
+                <input type="text" class="form-control mons7initRoll" id="mons7initRoll" placeholder="Enter Roll"></input>
+                <button id="mons7rollsubmit" type="mons7rollsubmit" class="btn btn-default mons7rollsubmit">Update</button>
+            </div>
+          </form>
+        </td>
+        <td style="text-align: center; vertical-align: middle;"><span class="mons7init">0</span></td>
+      </tr>
+  
+  <tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+  
+  
+
+  <td style="text-align: center; vertical-align: middle;">
+      <form class="form-inline">
+        <div class="form-group">
+            <label for="mons8nameInput">_Monster 8_:</label>
+            <input type="text" class="form-control mons8name" id="mons8name" placeholder="Enter Name"></input>
+            <button id="mons8submit" type="mons8submit" class="btn btn-default mons8submit">Update</button>
+            
+            <td style="text-align: center; vertical-align: middle;"><select id="selMons8size" onchange="getData(this.value)">
+                <option value="mons8size">SIZE</option>
+                <option value="mons8Fine">Fine</option> 
+                <option value="mons8Diminutive">Diminutive</option> 
+                <option value="mons8Tiny">Tiny</option>
+                <option value="mons8Small">Small</option> 
+                <option value="mons8Medium">Medium</option> 
+                <option value="mons8Large">Large</option>
+                <option value="mons8Huge">Huge</option>
+                <option value="mons8Gargantuan">Gargantuan</option> 
+                <option value="mons8Colossal">Colossal</option> 
+                <option value="mons8Colossal+">Colossal+</option> 
+            </select></td>
+            <td style="text-align: center; vertical-align: middle;"><select id="selMons8race" onchange="getData(this.value)">
+                <option value="Mons8race">RACE</option>
+                <option value="Mons8ogre">Ogre</option> 
+                <option value="Mons8orc">Orc</option> 
+                <option value="Mons8dragon">Dragon</option> 
+            </select></td>
+        </div>
+      </form>
+    </td>
+<tr> 
+    <td style="text-align: center; vertical-align: middle;">
+      <form class="form-inline">
+        <div class="form-group">
+            <label for="mons8modInput">___Modifier__:</label>
+            <input type="text" class="form-control mons8initMod" id="mons8initMod" placeholder="Enter Mod"></input>
+            <button id="mons8modsubmit" type="mons8modsubmit" class="btn btn-default mons8modsubmit">Update</button>
+        </div>
+      </form>
+    </td>
+    <td style="text-align: center; vertical-align: middle;"><span class="mons8mod">0</span></td>
+    <td style="text-align: center; vertical-align: middle;"><button type="button" class="btn btn-default btn-lg mons8up"><span class="glyphicon glyphicon-circle-arrow-up"></span> +</button>
+      <button type="button" class="btn btn-default btn-lg mons8down"><span class="glyphicon glyphicon-circle-arrow-down"></span> -
+      </button>
+    </td>
+  </tr>
+
+  <tr> 
+      <td style="text-align: center; vertical-align: middle;">
+        <form class="form-inline">
+          <div class="form-group">
+              <label for="mons8initInput">__Initiative__:</label>
+              <input type="text" class="form-control mons8initRoll" id="mons8initRoll" placeholder="Enter Roll"></input>
+              <button id="mons8rollsubmit" type="mons8rollsubmit" class="btn btn-default mons8rollsubmit">Update</button>
+          </div>
+        </form>
+      </td>
+      <td style="text-align: center; vertical-align: middle;"><span class="mons8init">0</span></td>
+    </tr>
+
+<tr><td>--------------------------------------------------------------------------------</td><td>-------------------</td><td>----------------------------</td></tr>
+
+
+            </tbody>
+            
+          </table>
+        
+    </div>
+
+  
+  <div class="col-md-offset-4 col-md-4">
+  
+  </div>
+</div> <!-- Row 1 -->
+
+  <div id='stars1'></div>
+  <div id='stars2'></div>
+  <div id='stars3'></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="static/js/data.js"></script>
+  <script src="static/js/app.js"></script>
+</body>
+
+</html>
